@@ -1,6 +1,7 @@
 /* global ethers */
 /* eslint prefer-const: "off" */
 
+import { getContractFactory } from "@nomiclabs/hardhat-ethers/types";
 import { ContractReceipt, Transaction } from "ethers";
 import { TransactionDescription, TransactionTypes } from "ethers/lib/utils";
 import { ethers } from "hardhat";
@@ -39,7 +40,7 @@ export async function deployDiamond() {
   // deploy facets
   console.log("");
   console.log("Deploying facets");
-  const FacetNames = ["DiamondLoupeFacet", "OwnershipFacet"];
+  const FacetNames = ["DiamondLoupeFacet", "OwnershipFacet", "NFT"];
   const cut = [];
   for (const FacetName of FacetNames) {
     const Facet = await ethers.getContractFactory(FacetName);
@@ -72,6 +73,21 @@ export async function deployDiamond() {
   }
   console.log("Completed diamond cut");
   DiamondAddress = diamond.address;
+
+  const myAddr = "0x23d5C0bAdf63ff6422B5B9310211d9BcE147e720";
+  const ipfsMetadataCid = "ipfs//QmUnLZtATqMMJEGKeCVQvkG5YULEZnc2aEg3y2dn11U3Ew"
+
+  const nft = await ethers.getContractAt("NFT", diamond.address);
+
+  const mintNow = await nft.safeMint(myAddr, ipfsMetadataCid);
+
+  console.log("You minted", mintNow);
+
+  // Checking the number of NFT minted
+  console.log("Checking Balance....");
+  const balanceOF = await nft.balanceOf(myAddr);
+  console.log("Number of NFTs: ", balanceOF);
+
 }
 
 // We recommend this pattern to be able to use async/await everywhere

@@ -28,9 +28,9 @@ module.exports = {
     localhost: {
       timeout: 8000000,
     },
-    kovan: {
-      url: process.env.KOVAN_URL,
-      accounts: [process.env.SECRET],
+    goerli: {
+      url: process.env.GOERLI_RPC_URL,
+      accounts: [process.env.PRIVATE_KEY],
       blockGasLimit: 200000000000,
       gasPrice: 10000000000,
       timeout: 90000,
