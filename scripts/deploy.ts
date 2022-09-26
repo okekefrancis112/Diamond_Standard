@@ -2,6 +2,7 @@
 /* eslint prefer-const: "off" */
 
 import { getContractFactory } from "@nomiclabs/hardhat-ethers/types";
+import console from "console";
 import { ContractReceipt, Transaction } from "ethers";
 import { TransactionDescription, TransactionTypes } from "ethers/lib/utils";
 import { ethers } from "hardhat";
@@ -69,11 +70,13 @@ export async function deployDiamond() {
   console.log("Diamond cut tx: ", tx.hash);
 
   const myAddr = "0x23d5C0bAdf63ff6422B5B9310211d9BcE147e720";
-  const ipfsMetadataCid = "ipfs//QmUnLZtATqMMJEGKeCVQvkG5YULEZnc2aEg3y2dn11U3Ew"
+  const ipfsMetadataCid = "ipfs//QmUnLZtATqMMJEGKeCVQvkG5YULEZnc2aEg3y2dn11U3Ew";
 
   const nft = await ethers.getContractAt("NFT", diamond.address);
+  console.log("Your nft is >>>>>", nft);
 
-  const mintNow = await (await nft.safeMint(myAddr, ipfsMetadataCid)).wait();
+  const mintNow = await nft.safeMint(myAddr, ipfsMetadataCid);
+  await mintNow.wait();
 
   console.log("You minted", mintNow);
 
