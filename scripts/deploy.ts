@@ -67,27 +67,28 @@ export async function deployDiamond() {
   let functionCall = diamondInit.interface.encodeFunctionData("init");
   tx = await diamondCut.diamondCut(cut, diamondInit.address, functionCall);
   console.log("Diamond cut tx: ", tx.hash);
-  receipt = await tx.wait();
-  if (!receipt.status) {
-    throw Error(`Diamond upgrade failed: ${tx.hash}`);
-  }
-  console.log("Completed diamond cut");
-  DiamondAddress = diamond.address;
 
   const myAddr = "0x23d5C0bAdf63ff6422B5B9310211d9BcE147e720";
   const ipfsMetadataCid = "ipfs//QmUnLZtATqMMJEGKeCVQvkG5YULEZnc2aEg3y2dn11U3Ew"
 
   const nft = await ethers.getContractAt("NFT", diamond.address);
 
-  const mintNow = await nft.safeMint(myAddr, ipfsMetadataCid);
+  const mintNow = await (await nft.safeMint(myAddr, ipfsMetadataCid)).wait();
 
   console.log("You minted", mintNow);
 
   // Checking the number of NFT minted
   console.log("Checking Balance....");
   const balanceOF = await nft.balanceOf(myAddr);
+  // const 
   console.log("Number of NFTs: ", balanceOF);
-
+  
+  receipt = await tx.wait();
+  if (!receipt.status) {
+    throw Error(`Diamond upgrade failed: ${tx.hash}`);
+  }
+  console.log("Completed diamond cut");
+  DiamondAddress = diamond.address;
 }
 
 // We recommend this pattern to be able to use async/await everywhere
